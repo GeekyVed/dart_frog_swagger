@@ -6,7 +6,6 @@ repository: https://github.com/GeekyVed/dart_frog_swagger
 environment:
   sdk: ^3.11.1
 
-# Add regular dependencies here.
 dependencies:
   analyzer: '>=5.0.0 <12.0.0'
   dart_frog: ^1.1.0
