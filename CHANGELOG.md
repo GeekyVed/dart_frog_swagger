@@ -1,4 +1,4 @@
-## 1.0.0
+## 1.0.1
 
 - Added `@Route` annotation for describing endpoints.
 - Added CLI that scans Dart Frog routes and generates `build/openapi.json`.
