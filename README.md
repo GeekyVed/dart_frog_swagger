@@ -24,7 +24,7 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 
 @Route(
-  method: ApiMethod.get,
+  method: HttpMethod.get,
   path: '/hello',
   description: 'Returns a friendly greeting.',
 )

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 
 class OpenApiGenerator extends GeneratorForAnnotation<Route> {
@@ -18,12 +19,12 @@ class OpenApiGenerator extends GeneratorForAnnotation<Route> {
   ) {
     final method = _readApiMethod(annotation);
     final path = annotation.read('path').stringValue;
-    final summary = annotation.read('description').stringValue;
+    final description = annotation.read('description').stringValue;
 
     _routes.add({
       "method": method.toLowerCase(),
       "path": path,
-      "summary": summary,
+      "description": description,
     });
 
     return null;
@@ -107,8 +108,8 @@ String _readApiMethod(ConstantReader reader) {
       .objectValue
       .getField('index')
       ?.toIntValue();
-  if (index != null && index >= 0 && index < ApiMethod.values.length) {
-    return ApiMethod.values[index].name;
+  if (index != null && index >= 0 && index < HttpMethod.values.length) {
+    return HttpMethod.values[index].name;
   }
 
   return 'get';

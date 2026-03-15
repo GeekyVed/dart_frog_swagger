@@ -9,7 +9,7 @@ import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 /// The `dart_frog_swagger` builder will scan for these annotations
 /// across your lib/ and routes/ directories.
 @Route(
-  method: ApiMethod.get,
+  method: HttpMethod.get,
   path: '/users',
   description: 'Fetches a list of all users available in the system.',
 )
@@ -23,7 +23,7 @@ Future<Response> onRequestUsers(RequestContext context) async {
 }
 
 @Route(
-  method: ApiMethod.post,
+  method: HttpMethod.post,
   path: '/users',
   description: 'Creates a new user.',
 )
