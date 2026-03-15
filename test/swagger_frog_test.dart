@@ -1,4 +1,3 @@
-import 'package:swagger_frog/swagger_frog.dart';
 import 'package:test/test.dart';
 
 void main() {

@@ -1,0 +1,22 @@
+targets:
+  $default:
+    builders:
+      swagger_frog|openapi_builder:
+        generate_for:
+          - lib/**.dart
+          - routes/**.dart
+
+builders:
+  openapi_builder:
+    import: "package:swagger_frog/builder.dart"
+    builder_factories: ["openApiBuilder"]
+    build_extensions: {"$package$": ["build/openapi.json"]}
+    auto_apply: root_package
+    build_to: source
+    defaults:
+      options:
+        title: "Dart Frog API"
+        version: "1.0.0"
+        include:
+          - "lib/**.dart"
+          - "routes/**.dart"
