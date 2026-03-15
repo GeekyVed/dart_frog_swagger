@@ -4,7 +4,7 @@ First off, thank you for considering contributing to `dart_frog_swagger`! It's p
 
 ## Where do I go from here?
 
-If you've noticed a bug or have a feature request, please make sure to check the [issue tracker](https://github.com/vedantsingh1/dart_frog_swagger/issues) to see if someone else has already created an issue for it. If not, go ahead and [create one](https://github.com/vedantsingh1/dart_frog_swagger/issues/new)!
+If you've noticed a bug or have a feature request, please make sure to check the [issue tracker](https://github.com/GeekyVed/dart_frog_swagger/issues) to see if someone else has already created an issue for it. If not, go ahead and [create one](https://github.com/GeekyVed/dart_frog_swagger/issues/new)!
 
 ## Setting up your environment
 
