@@ -1,0 +1,14 @@
+.dart_tool/
+.packages
+.pub-cache/
+build/
+coverage/
+
+# Editor/OS files
+.DS_Store
+.idea/
+.vscode/
+
+# Git metadata
+.git/
+.gitignore
