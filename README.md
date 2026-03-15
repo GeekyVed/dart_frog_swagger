@@ -52,6 +52,7 @@ Handler middleware(Handler handler) {
       title: 'My Custom API Docs',
       jsonRoute: '/openapi.json', // endpoint serving JSON
       jsonAssetPath: 'build/openapi.json', // where the CLI writes json
+      projectRoot: '.', // optional: used in error hints if JSON is missing
       transformJson: (json) {
         // Optional hook: dynamically apply modifications to the JSON
         json['info']['title'] = 'My Custom API Docs';
@@ -66,16 +67,18 @@ Handler middleware(Handler handler) {
 - **No output file**: Ensure you ran the CLI from the project root.
 - **Nothing found**: Confirm `routes/` or `lib/` exists and contains `@Route` annotations.
 - **Stale output**: Re-run `dart run dart_frog_swagger` after code changes.
+- **Deployment with build/ ignored**: Run `dart run dart_frog_swagger` during build/deploy. If the JSON file is missing, `/docs` shows a clear error page with the CLI command.
 
 ## Configuration Options
 
 ### Middleware options (`swaggerMiddleware`):
-- `docsRoute`: Route endpoint for Swagger UI (default: `/docs`)
-- `title`: HTML page `<title>` (default: `API Docs`)
-- `jsonRoute`: Route endpoint to serve the OpenAPI JSON (default: `/openapi.json`)
-- `jsonAssetPath`: Filename path to load the generated JSON from (default: `build/openapi.json`)
-- `jsonOverride`: Provide a Map JSON directly, bypassing file reading
-- `transformJson`: Hook to modify the JSON immediately before sending the response
+  - `docsRoute`: Route endpoint for Swagger UI (default: `/docs`)
+  - `title`: HTML page `<title>` (default: `API Docs`)
+  - `jsonRoute`: Route endpoint to serve the OpenAPI JSON (default: `/openapi.json`)
+  - `jsonAssetPath`: Filename path to load the generated JSON from (default: `build/openapi.json`)
+  - `jsonOverride`: Provide a Map JSON directly, bypassing file reading
+  - `transformJson`: Hook to modify the JSON immediately before sending the response
+  - `projectRoot`: Optional path used in error hints when the JSON file is missing
 
 ## Contributing
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more details on how to get started!

@@ -10,11 +10,10 @@ import 'package:path/path.dart' as p;
 class OpenApiScanner {
   const OpenApiScanner();
 
-  Future<void> scanAndGenerate() async {
-    final currentDir = Directory.current.path;
-    final libDir = p.join(currentDir, 'lib');
-    final routesDir = p.join(currentDir, 'routes');
-    final projectRoot = currentDir;
+  Future<void> scanAndGenerate({String? projectRoot}) async {
+    final root = projectRoot ?? Directory.current.path;
+    final libDir = p.join(root, 'lib');
+    final routesDir = p.join(root, 'routes');
 
     final includedPaths = <String>[];
     if (Directory(libDir).existsSync()) includedPaths.add(libDir);
@@ -25,7 +24,7 @@ class OpenApiScanner {
       return;
     }
 
-    final collection = AnalysisContextCollection(includedPaths: [projectRoot]);
+    final collection = AnalysisContextCollection(includedPaths: [root]);
 
     final List<Map<String, String>> routesInfo = [];
 
@@ -44,7 +43,7 @@ class OpenApiScanner {
       }
     }
 
-    await _generateOpenApiJson(routesInfo, projectRoot);
+    await _generateOpenApiJson(routesInfo, root);
   }
 
   void _scanResolvedUnit(
