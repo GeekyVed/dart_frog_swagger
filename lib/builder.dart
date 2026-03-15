@@ -12,13 +12,13 @@ class SimpleOpenApiBuilder implements Builder {
 
   @override
   final buildExtensions = const {
-    r'$package$': ['build/openapi.json']
+    r'$package$': ['build/openapi.json'],
   };
 
   @override
   Future<void> build(BuildStep buildStep) async {
     final generator = OpenApiGenerator(options.config);
-    
+
     // Use glob from config, or default to lib and routes
     List<String> globs = ['lib/**.dart', 'routes/**.dart'];
     if (options.config['include'] is List) {
@@ -36,7 +36,7 @@ class SimpleOpenApiBuilder implements Builder {
         await generator.generate(reader, buildStep);
       }
     }
-    
+
     await generator.finalize(buildStep);
   }
 }

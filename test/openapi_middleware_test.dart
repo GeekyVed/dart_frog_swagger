@@ -53,7 +53,9 @@ void main() {
     });
 
     test('reads openapi json from file when provided', () async {
-      final tempDir = await Directory.systemTemp.createTemp('dart_frog_swagger');
+      final tempDir = await Directory.systemTemp.createTemp(
+        'dart_frog_swagger',
+      );
       final jsonFile = File('${tempDir.path}/openapi.json');
       await jsonFile.writeAsString(
         jsonEncode({

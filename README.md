@@ -112,3 +112,5 @@ Handler middleware(Handler handler) {
 - `jsonOverride`: Provide a Map JSON directly, bypassing file reading
 - `transformJson`: Hook to modify the JSON immediately before sending the response
 
+## Contributing
+Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more details on how to get started!

@@ -6,22 +6,24 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 
 /// 1. Define routes using the @Route annotation.
-/// The `dart_frog_swagger` builder will scan for these annotations 
+/// The `dart_frog_swagger` builder will scan for these annotations
 /// across your lib/ and routes/ directories.
 @Route(
-  method: ApiMethod.get, 
+  method: ApiMethod.get,
   path: '/users',
   description: 'Fetches a list of all users available in the system.',
 )
 Future<Response> onRequestUsers(RequestContext context) async {
-  return Response.json(body: [
-    {'id': 1, 'name': 'John Doe'},
-    {'id': 2, 'name': 'Jane Smith'},
-  ]);
+  return Response.json(
+    body: [
+      {'id': 1, 'name': 'John Doe'},
+      {'id': 2, 'name': 'Jane Smith'},
+    ],
+  );
 }
 
 @Route(
-  method: ApiMethod.post, 
+  method: ApiMethod.post,
   path: '/users',
   description: 'Creates a new user.',
 )
