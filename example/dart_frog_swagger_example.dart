@@ -6,7 +6,7 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 
 /// 1. Define routes using the @Route annotation.
-/// The `dart_frog_swagger` builder will scan for these annotations
+/// The `dart_frog_swagger` CLI will scan for these annotations
 /// across your lib/ and routes/ directories.
 @Route(
   method: HttpMethod.get,
@@ -39,7 +39,7 @@ Handler middleware(Handler handler) {
       docsRoute: '/docs', // Where the Swagger UI will be hosted
       title: 'Example API Documentation', // HTML page title
       jsonRoute: '/openapi.json', // Where the raw JSON spec is hosted
-      jsonAssetPath: 'build/openapi.json', // Where the builder output is saved
+      jsonAssetPath: 'build/openapi.json', // Where the CLI output is saved
       transformJson: (json) {
         // Optional: modify the generated JSON dynamically before serving
         json['info']['version'] = '1.1.0';

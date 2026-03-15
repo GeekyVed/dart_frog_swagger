@@ -19,7 +19,7 @@ Since this is a solo-maintained repository and external contributors do not have
 ## Developing
 
 *   `lib/src/annotations/`: Contains the annotations (like `@Route`) used to decorate handlers.
-*   `lib/src/generators/`: Contains the builder/source_gen logic that parses annotations and generates `build/openapi.json`.
+*   `lib/src/cli/`: Contains the analyzer-powered CLI that scans annotations and generates `build/openapi.json`.
 *   `lib/src/middleware/`: Contains the Dart Frog middleware used to serve the Swagger UI and the OpenAPI JSON.
 *   `example/`: Contains a sample Dart Frog server demonstrating how to use the package.
 

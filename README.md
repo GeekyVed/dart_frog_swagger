@@ -4,7 +4,7 @@ Generates OpenAPI (Swagger) specifications from annotated Dart Frog handlers and
 
 ## Features
 - `@Route` annotation to describe endpoints directly alongside your handlers.
-- Build runner builder that automatically produces `build/openapi.json`.
+- Analyzer-powered CLI that scans your project (including `routes/`) and produces `build/openapi.json`.
 - Dart Frog middleware (`swaggerMiddleware`) to serve `/docs` (Swagger UI HTML) and `/openapi.json` with customizable titles, routes, and JSON transformations.
 
 ## Install
@@ -12,9 +12,6 @@ Add to your `pubspec.yaml`:
 ```yaml
 dependencies:
   dart_frog_swagger: ^1.0.0
-
-dev_dependencies:
-  build_runner: ^2.4.0
 ```
 
 ## Annotate Routes
@@ -34,43 +31,13 @@ Future<Response> onRequest(RequestContext context) async {
 ```
 
 ## Generate OpenAPI
-No extra configuration is strictly required. Simply run the build runner:
+No extra configuration is strictly required. Run:
 ```bash
-dart run build_runner build
+dart run dart_frog_swagger
 ```
 
-The builder will scan files in `lib/` and `routes/` for annotations and write the specification to `build/openapi.json`.
-
-### Advanced Configuration (Optional)
-If you want to configure global options such as `title`, `version`, `description`, `servers`, or precisely which file globs to scan, you can add a `build.yaml` file to your project's root:
-```yaml
-targets:
-  $default:
-    builders:
-      dart_frog_swagger:
-        generate_for:
-          - lib/**.dart
-          - routes/**.dart
-
-builders:
-  openapi_builder:
-    import: "package:dart_frog_swagger/builder.dart"
-    builder_factories: ["openApiBuilder"]
-    build_extensions: {"$package$": ["build/openapi.json"]}
-    auto_apply: root_package
-    build_to: source
-    defaults:
-      options:
-        title: "My Custom API"
-        version: "2.0.0"
-        description: "API for my awesome Dart Frog application"
-        include:
-          - "lib/**.dart"
-          - "routes/**.dart"
-        servers:
-          - "http://localhost:8080"
-          - {"url": "https://api.myapp.com", "description": "Production"}
-```
+The CLI scans files in `lib/` and `routes/` for annotations and writes the specification to `build/openapi.json`.
+Run it from your project root so `lib/` and `routes/` are resolved correctly.
 
 ## Serve Swagger UI in Dart Frog
 Mount the middleware inside your Dart Frog `_middleware.dart` configuration file:
@@ -84,7 +51,7 @@ Handler middleware(Handler handler) {
       docsRoute: '/docs', // where Swagger UI stands
       title: 'My Custom API Docs',
       jsonRoute: '/openapi.json', // endpoint serving JSON
-      jsonAssetPath: 'build/openapi.json', // where builder places json
+      jsonAssetPath: 'build/openapi.json', // where the CLI writes json
       transformJson: (json) {
         // Optional hook: dynamically apply modifications to the JSON
         json['info']['title'] = 'My Custom API Docs';
@@ -95,14 +62,12 @@ Handler middleware(Handler handler) {
 }
 ```
 
-## Configuration Options
+## Troubleshooting
+- **No output file**: Ensure you ran the CLI from the project root.
+- **Nothing found**: Confirm `routes/` or `lib/` exists and contains `@Route` annotations.
+- **Stale output**: Re-run `dart run dart_frog_swagger` after code changes.
 
-### Builder options (in `build.yaml`):
-- `title`: OpenAPI `info.title`
-- `version`: OpenAPI `info.version`
-- `description`: OpenAPI `info.description`
-- `servers`: list of URL string paths or `{url, description}` objects
-- `include`: file globs to scan for `@Route` annotations
+## Configuration Options
 
 ### Middleware options (`swaggerMiddleware`):
 - `docsRoute`: Route endpoint for Swagger UI (default: `/docs`)
