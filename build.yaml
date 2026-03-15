@@ -1,14 +1,14 @@
 targets:
   $default:
     builders:
-      swagger_frog|openapi_builder:
+      dart_frog_swagger|openapi_builder:
         generate_for:
           - lib/**.dart
           - routes/**.dart
 
 builders:
   openapi_builder:
-    import: "package:swagger_frog/builder.dart"
+    import: "package:dart_frog_swagger/builder.dart"
     builder_factories: ["openApiBuilder"]
     build_extensions: {"$package$": ["build/openapi.json"]}
     auto_apply: root_package

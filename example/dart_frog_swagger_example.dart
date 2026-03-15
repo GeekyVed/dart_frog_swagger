@@ -1,12 +1,12 @@
-/// Example showing how to use swagger_frog to generate OpenAPI docs
+/// Example showing how to use dart_frog_swagger to generate OpenAPI docs
 /// for your Dart Frog application.
 library;
 
 import 'package:dart_frog/dart_frog.dart';
-import 'package:swagger_frog/swagger_frog.dart';
+import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 
 /// 1. Define routes using the @Route annotation.
-/// The `swagger_frog` builder will scan for these annotations 
+/// The `dart_frog_swagger` builder will scan for these annotations 
 /// across your lib/ and routes/ directories.
 @Route(
   method: ApiMethod.get, 

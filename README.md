@@ -1,4 +1,4 @@
-# swagger_frog
+# dart_frog_swagger
 
 Generates OpenAPI (Swagger) specifications from annotated Dart Frog handlers and provides a simple Dart Frog middleware to serve a customizable Swagger UI documentation page.
 
@@ -11,7 +11,7 @@ Generates OpenAPI (Swagger) specifications from annotated Dart Frog handlers and
 Add to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  swagger_frog: ^1.0.0
+  dart_frog_swagger: ^1.0.0
 
 dev_dependencies:
   build_runner: ^2.4.0
@@ -21,7 +21,7 @@ dev_dependencies:
 Use the `@Route` annotation in your Dart Frog files:
 ```dart
 import 'package:dart_frog/dart_frog.dart';
-import 'package:swagger_frog/swagger_frog.dart';
+import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 
 @Route(
   method: ApiMethod.get,
@@ -47,14 +47,14 @@ If you want to configure global options such as `title`, `version`, `description
 targets:
   $default:
     builders:
-      swagger_frog:
+      dart_frog_swagger:
         generate_for:
           - lib/**.dart
           - routes/**.dart
 
 builders:
   openapi_builder:
-    import: "package:swagger_frog/builder.dart"
+    import: "package:dart_frog_swagger/builder.dart"
     builder_factories: ["openApiBuilder"]
     build_extensions: {"$package$": ["build/openapi.json"]}
     auto_apply: root_package
@@ -76,7 +76,7 @@ builders:
 Mount the middleware inside your Dart Frog `_middleware.dart` configuration file:
 ```dart
 import 'package:dart_frog/dart_frog.dart';
-import 'package:swagger_frog/swagger_frog.dart';
+import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 
 Handler middleware(Handler handler) {
   return handler.use(

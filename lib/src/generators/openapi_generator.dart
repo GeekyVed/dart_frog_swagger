@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:analyzer/dart/element/element.dart';
-import 'package:swagger_frog/swagger_frog.dart';
+import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 
 class OpenApiGenerator extends GeneratorForAnnotation<Route> {
   OpenApiGenerator([this.config = const {}]);

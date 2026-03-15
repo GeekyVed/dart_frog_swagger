@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
-import 'package:swagger_frog/swagger_frog.dart';
+import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -53,7 +53,7 @@ void main() {
     });
 
     test('reads openapi json from file when provided', () async {
-      final tempDir = await Directory.systemTemp.createTemp('swagger_frog');
+      final tempDir = await Directory.systemTemp.createTemp('dart_frog_swagger');
       final jsonFile = File('${tempDir.path}/openapi.json');
       await jsonFile.writeAsString(
         jsonEncode({

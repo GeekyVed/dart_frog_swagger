@@ -1,5 +1,5 @@
 import 'package:meta/meta_meta.dart';
-import 'package:swagger_frog/src/core/api_type_enum.dart';
+import 'package:dart_frog_swagger/src/core/api_type_enum.dart';
 
 @Target({TargetKind.function, TargetKind.method})
 class Route {
