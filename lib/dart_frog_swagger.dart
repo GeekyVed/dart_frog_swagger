@@ -1,3 +1,4 @@
+/// Tools to generate and serve OpenAPI/Swagger docs for Dart Frog apps.
 library;
 
 export 'src/annotations/openapi_annotations.dart';

@@ -3,6 +3,14 @@ import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
 
+/// Serves Swagger UI and the generated OpenAPI JSON for a Dart Frog app.
+///
+/// - `docsRoute` serves the Swagger UI page.
+/// - `jsonRoute` serves the OpenAPI JSON.
+/// - `jsonAssetPath` is the on-disk location of the generated spec.
+/// - `jsonOverride` can be provided to skip reading from disk.
+/// - `transformJson` can be used to tweak the spec before responding.
+/// - `projectRoot` is used only to improve error hints.
 Middleware swaggerMiddleware({
   String docsRoute = '/docs',
   String title = 'API Docs',
