@@ -11,7 +11,26 @@ import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 @Route(
   method: HttpMethod.get,
   path: '/users',
+  summary: 'List users',
   description: 'Fetches a list of all users available in the system.',
+  tags: ['Users'],
+  responses: [
+    ApiResponse(
+      statusCode: 200,
+      description: 'List of users',
+      schema: {
+        'type': 'array',
+        'items': {
+          'type': 'object',
+          'properties': {
+            'id': {'type': 'integer', 'example': 1},
+            'name': {'type': 'string', 'example': 'John Doe'},
+          },
+          'required': ['id', 'name'],
+        },
+      },
+    ),
+  ],
 )
 Future<Response> onRequestUsers(RequestContext context) async {
   return Response.json(
@@ -25,7 +44,34 @@ Future<Response> onRequestUsers(RequestContext context) async {
 @Route(
   method: HttpMethod.post,
   path: '/users',
+  summary: 'Create a user',
   description: 'Creates a new user.',
+  tags: ['Users'],
+  requestBody: ApiRequestBody(
+    description: 'New user payload',
+    required: true,
+    schema: {
+      'type': 'object',
+      'properties': {
+        'name': {'type': 'string', 'example': 'New User'},
+      },
+      'required': ['name'],
+    },
+  ),
+  responses: [
+    ApiResponse(
+      statusCode: 201,
+      description: 'User created',
+      schema: {
+        'type': 'object',
+        'properties': {
+          'id': {'type': 'integer', 'example': 3},
+          'name': {'type': 'string', 'example': 'New User'},
+        },
+        'required': ['id', 'name'],
+      },
+    ),
+  ],
 )
 Future<Response> onCreateUser(RequestContext context) async {
   return Response.json(body: {'id': 3, 'name': 'New User'}, statusCode: 201);

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:analyzer/dart/analysis/analysis_context_collection.dart';
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:path/path.dart' as p;
 
@@ -26,7 +27,7 @@ class OpenApiScanner {
 
     final collection = AnalysisContextCollection(includedPaths: [root]);
 
-    final List<Map<String, String>> routesInfo = [];
+    final List<Map<String, dynamic>> routesInfo = [];
 
     for (final context in collection.contexts) {
       final analyzedFiles = context.contextRoot.analyzedFiles().toList();
@@ -48,7 +49,7 @@ class OpenApiScanner {
 
   void _scanResolvedUnit(
     CompilationUnit unit,
-    List<Map<String, String>> routesInfo,
+    List<Map<String, dynamic>> routesInfo,
   ) {
     for (final declaration in unit.declarations) {
       if (declaration is FunctionDeclaration) {
@@ -103,7 +104,7 @@ class OpenApiScanner {
 
   void _checkMetadataForRoute(
     NodeList<Annotation> annotations,
-    List<Map<String, String>> routesInfo,
+    List<Map<String, dynamic>> routesInfo,
   ) {
     for (final annotation in annotations) {
       if (!_isRouteAnnotation(annotation)) continue;
@@ -113,6 +114,12 @@ class OpenApiScanner {
 
       final path = value.getField('path')?.toStringValue() ?? '';
       final description = value.getField('description')?.toStringValue() ?? '';
+      final summary = value.getField('summary')?.toStringValue();
+      final operationId = value.getField('operationId')?.toStringValue();
+      final tags = _readStringList(value.getField('tags'));
+      final requestBody = _buildRequestBody(value.getField('requestBody'));
+      final responses = _buildResponses(value.getField('responses'));
+      final deprecated = value.getField('deprecated')?.toBoolValue() ?? false;
       final methodField = value.getField('method');
 
       String methodStr = 'get';
@@ -144,6 +151,12 @@ class OpenApiScanner {
         'path': path,
         'description': description,
         'method': methodStr.toLowerCase(),
+        'summary': summary,
+        'operationId': operationId,
+        'tags': tags,
+        'requestBody': requestBody,
+        'responses': responses,
+        'deprecated': deprecated,
       });
     }
   }
@@ -162,22 +175,48 @@ class OpenApiScanner {
   }
 
   Future<void> _generateOpenApiJson(
-    List<Map<String, String>> routesInfo,
+    List<Map<String, dynamic>> routesInfo,
     String projectRoot,
   ) async {
     final paths = <String, dynamic>{};
     for (final route in routesInfo) {
-      final path = route['path']!;
-      final method = route['method']!;
-      final description = route['description']!;
+      final path = route['path'] as String;
+      final method = route['method'] as String;
+      final description = route['description'] as String;
+      final summary = route['summary'] as String?;
+      final operationId = route['operationId'] as String?;
+      final tags = route['tags'] as List<String>? ?? const [];
+      final requestBody = route['requestBody'] as Map<String, dynamic>?;
+      final responses = route['responses'] as Map<String, dynamic>?;
+      final deprecated = route['deprecated'] as bool? ?? false;
 
       paths.putIfAbsent(path, () => <String, dynamic>{});
-      paths[path][method] = {
-        "description": description,
-        "responses": {
+      final operation = <String, dynamic>{"description": description};
+      if (summary != null && summary.isNotEmpty) {
+        operation['summary'] = summary;
+      }
+      if (operationId != null && operationId.isNotEmpty) {
+        operation['operationId'] = operationId;
+      }
+      if (tags.isNotEmpty) {
+        operation['tags'] = tags;
+      }
+      if (deprecated) {
+        operation['deprecated'] = true;
+      }
+      if (requestBody != null && requestBody.isNotEmpty) {
+        operation['requestBody'] = requestBody;
+      }
+
+      if (responses != null && responses.isNotEmpty) {
+        operation['responses'] = responses;
+      } else {
+        operation['responses'] = {
           "200": {"description": "Success"},
-        },
-      };
+        };
+      }
+
+      paths[path][method] = operation;
     }
 
     const title = 'Dart Frog API';
@@ -200,5 +239,119 @@ class OpenApiScanner {
     final jsonStr = const JsonEncoder.withIndent("  ").convert(openapi);
     await jsonFile.writeAsString(jsonStr);
   }
+}
 
+List<String> _readStringList(DartObject? obj) {
+  if (obj == null) return const [];
+  final list = obj.toListValue();
+  if (list == null) return const [];
+  return [
+    for (final entry in list)
+      if (entry.toStringValue() != null) entry.toStringValue()!,
+  ];
+}
+
+Map<String, dynamic>? _buildRequestBody(DartObject? obj) {
+  if (obj == null) return null;
+  final description = obj.getField('description')?.toStringValue();
+  final required = obj.getField('required')?.toBoolValue();
+  final contentType =
+      obj.getField('contentType')?.toStringValue() ?? 'application/json';
+  final schema = _dartObjectToJson(obj.getField('schema'));
+  final example = _dartObjectToJson(obj.getField('example'));
+
+  final result = <String, dynamic>{};
+  if (description != null && description.isNotEmpty) {
+    result['description'] = description;
+  }
+  if (required != null) {
+    result['required'] = required;
+  }
+
+  if (schema != null || example != null) {
+    final media = <String, dynamic>{};
+    if (schema != null) {
+      media['schema'] = schema;
+    }
+    if (example != null) {
+      media['example'] = example;
+    }
+    result['content'] = {contentType: media};
+  }
+
+  return result.isEmpty ? null : result;
+}
+
+Map<String, dynamic>? _buildResponses(DartObject? obj) {
+  if (obj == null) return null;
+  final list = obj.toListValue();
+  if (list == null || list.isEmpty) return null;
+
+  final responses = <String, dynamic>{};
+  for (final entry in list) {
+    final statusCode = _readStatusCode(entry.getField('statusCode'));
+    final description = entry.getField('description')?.toStringValue();
+    final contentType =
+        entry.getField('contentType')?.toStringValue() ?? 'application/json';
+    final schema = _dartObjectToJson(entry.getField('schema'));
+    final example = _dartObjectToJson(entry.getField('example'));
+
+    if (statusCode == null || description == null || description.isEmpty) {
+      continue;
+    }
+
+    final response = <String, dynamic>{'description': description};
+    if (schema != null || example != null) {
+      final media = <String, dynamic>{};
+      if (schema != null) {
+        media['schema'] = schema;
+      }
+      if (example != null) {
+        media['example'] = example;
+      }
+      response['content'] = {contentType: media};
+    }
+
+    responses[statusCode] = response;
+  }
+
+  return responses.isEmpty ? null : responses;
+}
+
+String? _readStatusCode(DartObject? obj) {
+  if (obj == null) return null;
+  final intVal = obj.toIntValue();
+  if (intVal != null) return intVal.toString();
+  final strVal = obj.toStringValue();
+  if (strVal != null && strVal.isNotEmpty) return strVal;
+  return null;
+}
+
+dynamic _dartObjectToJson(DartObject? obj) {
+  if (obj == null || obj.isNull) return null;
+  final boolVal = obj.toBoolValue();
+  if (boolVal != null) return boolVal;
+  final intVal = obj.toIntValue();
+  if (intVal != null) return intVal;
+  final doubleVal = obj.toDoubleValue();
+  if (doubleVal != null) return doubleVal;
+  final stringVal = obj.toStringValue();
+  if (stringVal != null) return stringVal;
+
+  final listVal = obj.toListValue();
+  if (listVal != null) {
+    return [for (final entry in listVal) _dartObjectToJson(entry)];
+  }
+
+  final mapVal = obj.toMapValue();
+  if (mapVal != null) {
+    final map = <String, dynamic>{};
+    mapVal.forEach((key, value) {
+      final keyStr = _dartObjectToJson(key)?.toString() ?? '';
+      map[keyStr] = _dartObjectToJson(value);
+    });
+    return map;
+  }
+
+  return obj.toString();
 }

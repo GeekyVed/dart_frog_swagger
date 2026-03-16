@@ -4,6 +4,7 @@ Generates OpenAPI (Swagger) specifications from annotated Dart Frog handlers and
 
 ## Features
 - `@Route` annotation to describe endpoints directly alongside your handlers.
+- Optional request/response metadata (body schema, examples, tags, summary) for richer Swagger UI output.
 - Analyzer-powered CLI that scans your project (including `routes/`) and produces `build/openapi.json`.
 - Dart Frog middleware (`swaggerMiddleware`) to serve `/docs` (Swagger UI HTML) and `/openapi.json` with customizable titles, routes, and JSON transformations.
 
@@ -23,7 +24,22 @@ import 'package:dart_frog_swagger/dart_frog_swagger.dart';
 @Route(
   method: HttpMethod.get,
   path: '/hello',
+  summary: 'Say hello',
   description: 'Returns a friendly greeting.',
+  tags: const ['Greeting'],
+  responses: const [
+    ApiResponse(
+      statusCode: 200,
+      description: 'Greeting payload',
+      schema: const {
+        'type': 'object',
+        'properties': {
+          'message': {'type': 'string', 'example': 'Hello'},
+        },
+        'required': ['message'],
+      },
+    ),
+  ],
 )
 Future<Response> onRequest(RequestContext context) async {
   return Response(body: 'Hello');

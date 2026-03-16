@@ -8,9 +8,21 @@ import 'package:test/test.dart';
 void main() {
   group('openApiDocsMiddleware', () {
     test('serves swagger ui html at docs route', () async {
+      final tempDir = await Directory.systemTemp.createTemp(
+        'dart_frog_swagger_docs',
+      );
+      final jsonFile = File('${tempDir.path}/openapi.json');
+      await jsonFile.writeAsString(
+        jsonEncode({
+          'openapi': '3.0.0',
+          'info': {'title': 'Test', 'version': '1.0.0'},
+        }),
+      );
+
       final server = await _startServer(
         docsRoute: '/docs',
         title: 'My API Docs',
+        jsonAssetPath: jsonFile.path,
       );
 
       try {
@@ -24,6 +36,7 @@ void main() {
         expect(response.body, contains('swagger-ui'));
       } finally {
         await server.close();
+        await tempDir.delete(recursive: true);
       }
     });
 
