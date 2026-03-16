@@ -1,0 +1,33 @@
+X (short)
+I was building a backend with dart_frog and hit a docs gap: Swagger UI was not supported in my stack, so my routes and request/response shapes had no proper docs. So I built it.
+
+Added annotations for routes plus request/response schemas, generate OpenAPI JSON, and serve Swagger UI from middleware.
+
+Things I learned along the way:
+- Annotations are just classes with const constructors
+- The analyzer can read annotation values as compile-time constants
+- A small scanner can build OpenAPI JSON without build_runner
+- Swagger UI is just HTML + the JSON spec
+
+Docs are not extra - they are part of the product.
+
+Repo: https://github.com/GeekyVed/dart_frog_swagger
+Pub.dev: https://pub.dev/packages/dart_frog_swagger
+
+LinkedIn (longer)
+I was building a backend and ran into a gap: Swagger UI was not supported in my stack, so I could not get clean, first-class docs for routes and request/response bodies. Instead of hacking around it, I built the missing layer into this project.
+
+The approach: route annotations carry metadata (method, path, summary, tags), request bodies, and responses. A scanner reads those annotations and outputs a standard OpenAPI JSON file, and Swagger UI renders the docs by pointing at that JSON.
+
+What I learned building this:
+- Annotations are just classes with const constructors
+- The analyzer reads annotation values as compile-time constants
+- A small scanner can build OpenAPI JSON without build_runner
+- Swagger UI is simply HTML + a JSON spec
+- Good schema structure makes client generation reliable
+- Documentation is part of product quality
+
+This project reinforced something simple: making APIs usable is just as important as making them work.
+
+Repo: https://github.com/GeekyVed/dart_frog_swagger
+Pub.dev: https://pub.dev/packages/dart_frog_swagger
